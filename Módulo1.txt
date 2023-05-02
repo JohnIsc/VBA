@@ -1,0 +1,106 @@
+Attribute VB_Name = "Módulo1"
+Sub INSERIRCADASTROALUNO()
+CadastroAluno.lblTipoCadastro.Tag = 0 'quando a tag for zero, o cadastro é novo
+CadastroAluno.lblTipoCadastro.Caption = "NOVO CADASTRO"
+CadastroAluno.Show
+
+End Sub
+'O id é a chave, a identificação pessoal , que nunca se repete
+Sub AbrirEditarCadastro()
+CadastroAluno.lblTipoCadastro.Tag = Mid(Application.Caller, 10) 'icoeditar =9 letras , dai soma +1 =10, logo, mid =10
+CadastroAluno.lblTipoCadastro.Caption = "EDIÇÃO DE CADASTRO"
+PesquisadordeRegistro CadastroAluno.lblTipoCadastro.Tag
+CadastroAluno.Show
+
+End Sub
+
+Sub PesquisadordeRegistro(IDCADASTRO As Integer)
+Dim Linha As Integer
+Linha = 5 'Mudei o número da minha variavel linha pra ele começar a pesquisar os cadastros do inicio
+Do While Planilha1.Cells(Linha, 2) <> IDCADASTRO 'Dowhile é procure
+Linha = Linha + 1
+Loop
+
+With CadastroAluno ' vai pesquisar nos campos respectivos
+.txtDataNasc.Value = Planilha1.Cells(Linha, 4)
+.txtPai.Value = Planilha1.Cells(Linha, 5)
+.txtMae.Value = Planilha1.Cells(Linha, 6)
+.txtResponsavel.Value = Planilha1.Cells(Linha, 7)
+.txtRestricao.Value = Planilha1.Cells(Linha, 8)
+.txtNaturalidade.Value = Planilha1.Cells(Linha, 9)
+.cboSexo.Value = Planilha1.Cells(Linha, 10)
+.txtCep.Value = Planilha1.Cells(Linha, 11)
+.txtLogradouro = Planilha1.Cells(Linha, 12)
+.txtEndereço = Planilha1.Cells(Linha, 13)
+.txtN.Value = Planilha1.Cells(Linha, 14)
+.txtComplemento.Value = Planilha1.Cells(Linha, 15)
+.txtBairro.Value = Planilha1.Cells(Linha, 16)
+.txtCidade.Value = Planilha1.Cells(Linha, 17)
+.txtUF.Value = Planilha1.Cells(Linha, 18)
+.txtCelular1.Value = Planilha1.Cells(Linha, 19)
+.txtCelular2.Value = Planilha1.Cells(Linha, 20)
+.cboPeriodo.Value = Planilha1.Cells(Linha, 21)
+.cboCiclo.Value = Planilha1.Cells(Linha, 22)
+.cboProfessores.Value = Planilha1.Cells(Linha, 23)
+.cboTurno.Value = Planilha1.Cells(Linha, 24)
+.cboSituacaodoAluno.Value = Planilha1.Cells(Linha, 25)
+'Não precida da data de cadastro nem do ID
+.cboNE.Value = Planilha1.Cells(Linha, 27)
+.txtDataTransferencia.Value = Planilha1.Cells(Linha, 28)
+
+End With
+
+End Sub
+
+Sub ExcluirCadastro()
+
+Dim Linha      As Integer
+Dim IDCADASTRO As Integer
+Dim Msgbox     As Integer
+
+MsgboxResposta = Msgbox("Tem certeza que deseja excluir esse cadastro?", vbInformation + vbYesNo, "Exclusão de Cadastro")
+If Msgbox = vbNo Then Exit Sub
+
+IDCADASTRO = Mid(Application.Caller, 11) 'mid ' aa , pq o icone excluir(icoexcluir) tem 10 letras + 1 = 11
+Linha = 391
+Do While Planilha1.Cells(Linha, 2) <> IDCADASTRO
+Linha = Linha + 1
+Loop
+
+Rows(Linha & ":" & Linha).Delete Shift:=xlUp 'pra subir uma linha cada vez que houver exclusão
+Planilha1.Shapes("icoEditar" & IDCADASTRO).Delete 'pra excluir icones
+Planilha1.Shapes("icoExcluir" & IDCADASTRO).Delete
+Msgbox "Cadastro excluido com sucesso!", vbInformation, "Exclusão de Cadastro"
+
+
+End Sub
+
+
+Sub InserirBotoesAcao(Linha As Integer, IDCADASTRO As Integer)
+'For Linha = 5 To 391
+
+'IconeEditar. Só selecionar ele no excell pra saber o nome que colocamos nele
+Planilha1.Shapes("icoEditar").Copy 'pra ele copiar essa imagem de icone
+Planilha1.Range("AC" & Linha).Activate  ' PRA ELE COLAR ESSE ICONE NA COLUNA AC na minha variavel Linha
+Planilha1.Paste
+
+Selection.ShapeRange.Name = "icoEditar" & IDCADASTRO
+Selection.ShapeRange.IncrementTop (0.5555905512 * 4)
+Selection.ShapeRange.IncrementLeft (0.5555905512 * 6)
+Selection.OnAction = "AbrirEditarCadastro"
+
+'IconeEXCLUIR. Só selecionar ele no excell pra saber o nome que colocamos nele
+Planilha1.Shapes("icoExcluir").Copy 'pra ele copiar essa imagem de icone
+Planilha1.Range("AD" & Linha).Activate  ' PRA ELE COLAR ESSE ICONE NA COLUNA AC na minha variavel Linha
+Planilha1.Paste
+
+Selection.ShapeRange.Name = "icoExcluir" & IDCADASTRO
+Selection.ShapeRange.IncrementTop (0.5555905512 * 4)
+Selection.ShapeRange.IncrementLeft (0.5555905512 * 6)
+Selection.OnAction = "ExcluirCadastro"
+'Next Linha
+
+
+End Sub
+
+
